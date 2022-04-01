@@ -76,20 +76,22 @@ const particlesOptions = {
   detectRetina: true,
 }
 
-function App() {
-  return (
-    <div className="App">
-      <Particles
-        className='particles'
-        params={particlesOptions}
-      />
-      <Navigation />
-      <Logo />
-      <Rank />
-      <InputForm />
-  {/*<FaceRecognition />*/}
-    </div>
-  );
+class App extends React.Component {
+  render() {
+    return (
+      <div className="App">
+        <Particles
+          className='particles'
+          params={particlesOptions}
+        />
+        <Navigation />
+        <Logo />
+        <Rank />
+        <InputForm />
+    {/*<FaceRecognition />*/}
+      </div>
+    );
+  }
 }
 
 export default App;
