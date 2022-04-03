@@ -4,14 +4,14 @@ const Navigation = ({ onRouteChange, isSignedIn }) => {
         if(isSignedIn) {
             return(
                 <nav style={{display: 'flex', justifyContent: 'flex-end'}}>
-                    <p onClick={() => onRouteChange('signout')} className="f3 mt0 link dim black pa3 underline pointer">Sign Out</p>
+                    <p onClick={() => onRouteChange('signout')} className="f4 br4 bg-light-purple white mt2 mr2 link dim black pa2 ba b--white pointer">Sign Out</p>
                 </nav>
             )
         } else{
             return(
                 <nav style={{display: 'flex', justifyContent: 'flex-end'}}>
-                    <p onClick={() => onRouteChange('signin')} className="f3 mt0 link dim black pa3 underline pointer">Sign In</p>
-                    <p onClick={() => onRouteChange('register')} className="f3 mt0 link dim black pa3 underline pointer">Register</p>
+                    <p onClick={() => onRouteChange('signin')} className="f4 br4 bg-light-purple white mt2 mr2 link dim black pa2 ba b--white pointer">Sign In</p>
+                    <p onClick={() => onRouteChange('register')} className="f4 br4 bg-light-purple white mt2 mr2 link dim black pa2 ba b--white pointer">Register</p>
                 </nav>
             );
         }
