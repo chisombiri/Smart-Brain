@@ -1,7 +1,7 @@
 import React from "react";
 import './InputForm.css';
 
-const InputForm = () => {
+const InputForm = ({onInputChange, onButtonSubmit}) => {
     return(
         <div>
             <p className="f3 yellow">
@@ -9,8 +9,13 @@ const InputForm = () => {
             </p>
             <div className="center">
                 <div className="form center pa4 br3 shadow-5">
-                    <input className="f4 pa2 center w-70" type='text' placeholder='Enter your image url'/>
-                    <button className="w-30 link pv2 ph3 grow f4 dib white bg-light-purple">Detect</button>
+                    <input className="f4 pa2 center w-70" type='text' placeholder='Enter your image url' onChange={onInputChange}/>
+                    <button 
+                    className="w-30 link pv2 ph3 grow f4 dib white bg-light-purple"
+                    onClick={onButtonSubmit}
+                    >
+                        Detect
+                    </button>
                 </div>
             </div>
         </div>
