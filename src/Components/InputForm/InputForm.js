@@ -13,9 +13,7 @@ const InputForm = ({onInputChange, onButtonSubmit}) => {
                     <button 
                     className="w-30 link pv2 ph3 grow f4 dib white bg-light-purple"
                     onClick={onButtonSubmit}
-                    >
-                        Detect
-                    </button>
+                    >Detect</button>
                 </div>
             </div>
         </div>

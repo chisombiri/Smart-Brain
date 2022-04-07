@@ -8,7 +8,11 @@ import Signin from './Components/Signin/Signin.js';
 import Register from './Components/Register/Register.js';
 import Rank from './Components/Rank/Rank';
 import './App.css';
- 
+
+//API key from Clarifai.
+// const app = new Clarifai.App({
+//   apiKey: 'YOUR API KEY HERE'
+//  });
 
 const particlesOptions = {
   interactivity: {
@@ -87,16 +91,87 @@ class App extends React.Component {
       imageUrl: '',
       box: {},
       route: 'signin',
-      isSignedIn: false
+      isSignedIn: false,
+      user: {
+        id: '',
+        username: '',
+        email: '',
+        entries: 0, //will be used to track score of photo submissions
+        joined: ''
+      }
     }
   }
 
-  onInputChange = (e) => {
-    console.log(e.target.value);
+  loadUser = (data) => {
+    this.setState(
+      {user: {
+      id: data.id,
+      username: data.username,
+      email: data.email,
+      entries: data.entries, //will be used to track score of photo submissions
+      joined: data.joined
+      }
+    }
+    )
   }
 
+  //FUNCTION TO CALCULATE FACE LOCATION
+  calculateFaceLocation = (data) => {
+    const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
+    const image = document.getElementById('inputimage');
+    const width = Number(image.width);
+    const height = Number(image.height);
+    return {
+      leftCol: clarifaiFace.left_col * width,
+      topRow: clarifaiFace.top_row * height,
+      rightCol: width - (clarifaiFace.right_col * width),
+      bottomRow: height - (clarifaiFace.bottom_row * height)
+    }
+  }
+
+  //FUNCTION TO DISPLAY FACE BOX
+  displayFaceBox = (box) => {
+    this.setState({box: box});
+  }
+
+  //Testing if I can get data from backend
+  // componentDidMount(){
+  //   fetch('http://localhost:3001')
+  //   .then(res => res.json())
+  //   .then(console.log)
+  // }
+
+  onInputChange = (e) => {
+    this.setState({ input: e.target.value });
+  }
+
+  //DETECTING FACE ON SUBMIT OF IMAGE(DETECT BUTTON)
   onButtonSubmit = () => {
-    console.log('click');
+    this.setState({imageUrl: this.state.input});
+    // app.models
+    //   .predict(
+    //     Clarifai.FACE_DETECT_MODEL,
+    //     this.state.input)
+    //   .then(response => {
+    //     console.log('hi', response)
+    //     if (response) {
+    //       fetch('http://localhost:3001/image', {
+    //         method: 'put',
+    //         headers: {'Content-Type': 'application/json'},
+    //         body: JSON.stringify({
+    //           id: this.state.user.id
+    //         })
+    //       })
+    //         .then(response => response.json())
+    //         .then(count => {
+    //           //updating user object
+    //           this.setState(Object.assign(this.state.user, { entries: count }))
+    //         })
+
+    //     }
+    //     this.displayFaceBox(this.calculateFaceLocation(response))
+    //   })
+    //   .catch(err => console.log(err));
   }
 
   onRouteChange = (route) => {
@@ -122,14 +197,14 @@ class App extends React.Component {
         { route === 'home' 
           ? <div>
               <Logo />
-              <Rank />
+              <Rank username={this.state.user.username} entries={this.state.user.entries}/>
               <InputForm onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit} />
-              <FaceRecognition />
+              {/* <FaceRecognition box={box} imageUrl={imageUrl}/> */}
             </div>
           : (
             this.state.route === 'signin' 
-            ? <Signin onRouteChange={this.onRouteChange}/> 
-            : <Register onRouteChange={this.onRouteChange}/>
+            ? <Signin loadUser={this.loadUser} onRouteChange={this.onRouteChange}/> 
+            : <Register loadUser={this.loadUser} onRouteChange={this.onRouteChange}/>
           )
         }
       </div>
