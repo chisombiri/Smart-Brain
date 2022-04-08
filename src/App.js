@@ -106,7 +106,7 @@ class App extends React.Component {
     this.setState(
       {user: {
       id: data.id,
-      username: data.username,
+      username: data.name,
       email: data.email,
       entries: data.entries, //will be used to track score of photo submissions
       joined: data.joined
