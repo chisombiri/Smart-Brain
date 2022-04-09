@@ -43,7 +43,8 @@ class Register extends React.Component {
         })
         .then(res => res.json())
         .then(user => {
-            if(user){
+            //ensure it checks with specific id from database
+            if(user.id){
                 //loading the user
                 this.props.loadUser(user);
                 //changing route on successful sign in

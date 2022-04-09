@@ -9,11 +9,6 @@ import Register from './Components/Register/Register.js';
 import Rank from './Components/Rank/Rank';
 import './App.css';
 
-//API key from Clarifai.
-// const app = new Clarifai.App({
-//   apiKey: 'YOUR API KEY HERE'
-//  });
-
 const particlesOptions = {
   interactivity: {
     events: {
@@ -83,23 +78,26 @@ const particlesOptions = {
   detectRetina: true,
 }
 
+//code review: allowing everything to be cleared when logged out and back to another user
+const initialState = {
+  input: '',
+  imageUrl: '',
+  box: {},
+  route: 'signin',
+  isSignedIn: false,
+  user: {
+    id: '',
+    username: '',
+    email: '',
+    entries: 0, //will be used to track score of photo submissions
+    joined: ''
+  }
+}
+
 class App extends React.Component {
   constructor(){
     super();
-    this.state = {
-      input: '',
-      imageUrl: '',
-      box: {},
-      route: 'signin',
-      isSignedIn: false,
-      user: {
-        id: '',
-        username: '',
-        email: '',
-        entries: 0, //will be used to track score of photo submissions
-        joined: ''
-      }
-    }
+    this.state = initialState;
   }
 
   loadUser = (data) => {
@@ -118,7 +116,7 @@ class App extends React.Component {
   //FUNCTION TO CALCULATE FACE LOCATION
   calculateFaceLocation = (data) => {
     const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
-    const image = document.getElementById('inputimage');
+    const image = document.getElementById('input-image');
     const width = Number(image.width);
     const height = Number(image.height);
     return {
@@ -148,35 +146,41 @@ class App extends React.Component {
   //DETECTING FACE ON SUBMIT OF IMAGE(DETECT BUTTON)
   onButtonSubmit = () => {
     this.setState({imageUrl: this.state.input});
-    // app.models
-    //   .predict(
-    //     Clarifai.FACE_DETECT_MODEL,
-    //     this.state.input)
-    //   .then(response => {
-    //     console.log('hi', response)
-    //     if (response) {
-    //       fetch('http://localhost:3001/image', {
-    //         method: 'put',
-    //         headers: {'Content-Type': 'application/json'},
-    //         body: JSON.stringify({
-    //           id: this.state.user.id
-    //         })
-    //       })
-    //         .then(response => response.json())
-    //         .then(count => {
-    //           //updating user object
-    //           this.setState(Object.assign(this.state.user, { entries: count }))
-    //         })
+    //fetching imageurl endpoint from server
+        fetch('http://localhost:3001/imageurl', {
+          method: 'post',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            input: this.state.input
+          })
+        })
+          .then(response => response.json())
+          .then(response => {
+            // console.log('hey', response)
+            if (response) {
+              fetch('http://localhost:3001/image', {
+                method: 'put',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                  id: this.state.user.id
+                })
+              })
+                .then(response => response.json())
+                .then(count => {
+                  //updating user object
+                  this.setState(Object.assign(this.state.user, { entries: count }))
+                })
+                .catch(console.log)
 
-    //     }
-    //     this.displayFaceBox(this.calculateFaceLocation(response))
-    //   })
-    //   .catch(err => console.log(err));
+            }
+            this.displayFaceBox(this.calculateFaceLocation(response))
+          })
+          .catch(err => console.log(err));
   }
 
   onRouteChange = (route) => {
     if(route === 'signout'){
-      this.setState({isSignedIn: false});
+      this.setState(initialState);
     } else if(route === 'home'){
       this.setState({isSignedIn: true});
     }
@@ -185,7 +189,7 @@ class App extends React.Component {
 
   render() {
     // destructuring to avoid using this.state all through
-    const { isSignedIn, route } = this.state;
+    const { isSignedIn, route, imageUrl, box } = this.state;
     return (
       <div className="App">
         <Particles
@@ -199,7 +203,7 @@ class App extends React.Component {
               <Logo />
               <Rank username={this.state.user.username} entries={this.state.user.entries}/>
               <InputForm onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit} />
-              {/* <FaceRecognition box={box} imageUrl={imageUrl}/> */}
+              <FaceRecognition box={box} imageUrl={imageUrl}/> 
             </div>
           : (
             this.state.route === 'signin' 

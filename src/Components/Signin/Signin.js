@@ -36,6 +36,7 @@ class Signin extends React.Component{
         })
         .then(res => res.json())
         .then(user => {
+            //ensure it checks with specific id from database
             if(user.id){
                 //loading the user
                 this.props.loadUser(user);
