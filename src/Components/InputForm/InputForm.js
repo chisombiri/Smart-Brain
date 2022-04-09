@@ -5,7 +5,7 @@ const InputForm = ({onInputChange, onButtonSubmit}) => {
     return(
         <div>
             <p className="f3 yellow">
-                {'This smart app will detect Faces in your pictures, try it out!'}
+                {'This smart app will detect Faces in your image(url), try it out!'}
             </p>
             <div className="center">
                 <div className="form center pa4 br3 shadow-5">
